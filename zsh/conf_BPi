@@ -1,0 +1,24 @@
+#conf_bannanpi
+
+tlog() {
+  tmx "log" $@
+}
+
+restart() {
+  sudo shutdown -r $([ "$1" ] && echo "$@" || echo "now")
+}
+
+notify() {
+  [ "$?" = "130" ] && return 130
+  local subject="$1"
+  shift
+  echo "$@\n$(whoami) - $(date) - $(pwd)" | mail -s "$subject" $([ $CREDENTIALS_MAIL ] && echo "$CREDENTIALS_MAIL" || whoami)
+}
+
+if ! _has_session main ; then
+  _create_session main
+fi
+
+if ! _has_session log ; then
+  _create_session log
+fi

@@ -1,0 +1,136 @@
+#conf_all
+if [ "$(diff $(dirname $0)/.zshrc ~/.zshrc 2>/dev/null)" != "" ]; then
+  cp $(dirname $0)/.zshrc ~/.zshrc
+  echo "Please restart your terminal sessions! new update in .zshrc config"
+  kill -INT $$
+fi
+
+COLOR_RED="\\033[0;31m"
+COLOR_GREEN="\\033[0;32m"
+COLOR_ORANGE="\\033[0;33m"
+COLOR_RESET="\\033[0m"
+
+LINE_BEGIN="\\r"
+LINE_CLEAR="${LINE_BEGIN}\\033[K"
+LINE_UP="\\033[A"
+
+function split() {
+  echo "------"
+}
+
+function dots() {
+  echo -n "...\b\b\b"
+}
+
+function _progessInfo() {
+  echo -n "$@: " && dots
+}
+
+function _argsContaining() {
+  local search="$1"
+  shift
+  for i in $@; do
+    [ "$i" = "$search" ] && return
+  done
+  return 1
+}
+
+function _error() {
+  [ "$2" ] && echo "$1\n" || echo "$1"
+  [ "$2" ] && [ -d "$2" ] && rm -rf "$2"
+  return 1
+}
+
+function _check_for_process() {
+  if [ "$1" ]; then
+    ps ax | grep --color=always "$1" | grep -v grep
+  else
+    echo "no process name defined" && false
+    echo "\$1 => process name" && false
+  fi
+}
+
+function basedir() {
+  [ "$1" ] || _error "./" || return
+  [ -z "${1##*/}" ] && ( \
+    [ -z "${1##/*}" ] || [ -z "${1##\~*}" ] || [ -z "${1##\.*}" ] \
+      && echo "$1" || echo "./$1" ) && return
+  local file="$(basename $1)"
+  "$0" "${1:0:${#1}-${#file}}"
+}
+
+function _has_session() {
+  tmux has-session -t $1 2>/dev/null
+}
+
+function _create_session() {
+  local file="$MOLIKUNER_CONF_DIR/tmux/$1.sh"
+  if [ -f "$file" ]; then
+    local name="$1"
+    shift
+    [ "$TMUX" ] && TMUX= tmux new-session -d $@ -s "$name" -n "$name" \
+      || tmux new-session -d $@ -s "$name" -n "$name"
+    zsh "$file" $@
+    echo "[created (new session $name)]"
+  else
+    echo "no setup file '$1'!"
+  fi
+}
+
+function tmx() {
+  if _argsContaining "-h" $@ || _argsContaining "--help" $@; then
+    echo -e "USAGE: $0 //TODO
+    # tmx d -> detach
+    # tmx (inside tmux) -> detach
+    # tmx [- ARGUMENTS] (outside) -> tmux ARGUMENTS
+    # tmx main -> create session main or attach"
+  elif [ "$@" = "d" ] || ([ "$1" = "-" ] && [ "$@" != "-" ]) || ([ ! "$@" ] && [ "$TMUX" ]); then
+    [ "$TMUX" ] && tmux detach-client
+    shift
+    [ "$@" ] tmux $@
+  else
+    if _has_session $1; then
+      if [ ! "$TMUX" ]; then
+        echo "[attached (to session $1)]"
+        tmux attach -t $1
+      else
+        tmux switch-client -t $1
+      fi
+    else
+      _create_session $@
+      $0 $@
+    fi
+  fi
+}
+
+function tmain() {
+  tmx "main" $1
+}
+
+function dupes() {
+  if _argsContaining "-h" $@ || _argsContaining "--help" $@; then
+    echo -e "USAGE: $0 [fileSizeCheck]\nfileSizeCheck is the size until the files will be checked for equally\ne.g.: 1M, so nothing would be complete"
+    return
+  fi
+  touch md5-partial.txt
+  local num=0;
+  find -type f -print0 | while IFS= read -r -d '' i; do
+    echo -ne "\033[K$i\r"
+    # if name equal skip
+    if grep -q "${i}" md5-partial.txt >/dev/null; then echo -e "\n$i  ---- Already counted, skipping."; continue; fi
+    if [ "$1" ]; then
+      local MD5=`dd bs=$1 count=1 if="$i" status=noxfer 2>/dev/null | md5sum`
+    else
+      local MD5=`dd if="$i" status=noxfer 2>/dev/null | md5sum`
+    fi
+    local MD5=`echo $MD5 | cut -d ' ' -f 1`
+    if grep "$MD5" md5-partial.txt; then echo "$i  ----   Possible duplicate\n"; num=$((num+1)); fi
+    echo $MD5 $i >> md5-partial.txt
+  done
+  echo -e "\033[Kfound $num possible dups"
+  rm md5-partial.txt
+}
+
+function infinity() {
+  while true; do sleep 1 && "$@"; done
+}
