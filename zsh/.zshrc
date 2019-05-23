@@ -88,5 +88,5 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-export MOLIKUNER_CONF_DIR=$HOME/workspace/config
+export MOLIKUNER_CONF_DIR=~/workspace/config
 source $MOLIKUNER_CONF_DIR/zsh/conf_master
