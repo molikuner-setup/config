@@ -16,7 +16,6 @@ tmux split-window -v -t "$session"
 tmux send-keys -t "${window}.0" ' clear' Enter " tail -F /var/log/fail2ban.log" Enter
 tmux send-keys -t "${window}.1" ' clear' Enter " tail -F /var/log/mail.log" Enter
 tmux send-keys -t "${window}.2" ' clear' Enter " tail -F /var/log/pihole.log" Enter
-# TODO check which one was here
-# tmux send-keys -t "${window}.3" ' clear' Enter ""
+tmux send-keys -t "${window}.3" ' clear' Enter " tail -F /var/log/radicale/radicale.log" Enter
 tmux select-window -t "${window}"
 tmux rename-window "${session}"
