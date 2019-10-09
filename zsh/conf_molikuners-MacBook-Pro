@@ -1,0 +1,105 @@
+#conf_molikuners-MacBook-Pro # Work
+
+export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"  # Added by n-install (see http://git.io/n-install-repo).
+
+export GPG_TTY=$(tty)
+
+gitMolikuner() {
+  if ! git status &>/dev/null; then
+    echo "You need to have an exsisting git repo" >&2
+    return 1
+  fi
+  git config user.name molikuner
+  git config user.email molikuner@gmail.com
+}
+
+gitWork() {
+  if ! git status &>/dev/null; then
+    echo "You need to have an exsisting git repo" >&2
+    return 1
+  fi
+  git config --unset user.name
+  git config --unset user.email
+}
+
+gitProfile() {
+  if ! git status &>/dev/null; then
+    echo "You need to have an exsisting git repo" >&2
+    return 1
+  fi
+  local name
+  name=$(git config user.name)
+  if [ "$name" = "molikuner" ]; then
+    echo "Profile: molikuner"
+  elif [ "$name" = "$NAME" ]; then # $NAME is from .credentials
+    echo "Profile: Work"
+  else
+    echo "Unknown profile" >&2
+    return 1
+  fi
+}
+
+tadb() {
+  tmx "adb" $@
+}
+
+tdev() {
+  tmx "dev" $@
+}
+
+typeOnDevice() {
+  echo "$@" | adb shell xargs -0 input text
+}
+
+isAppInstalled() {
+  if _argsContaining "-h" $@ || _argsContaining "--help" $@ || \
+    [ ! "$1" ]; then
+    echo -e "USAGE: isAppInstalled app\n\tapp:\tapp is a complete app name (e.g. com.moliuner.nigb)"
+    return 1
+  fi
+  adb shell "pm list packages -f" | grep -Eo "=[^\/=]+" | grep -Eo "[^=]+" | grep "${1}" >/dev/null
+}
+
+installNStart() {
+  _argsContaining "-h" $@ || _argsContaining "--help" $@ || [ ! "$1" ] || [ ! "$2" ] \
+    && echo -e "INTERNAL ERROR!: wrong params $0\nUSAGE: <file> <app> [ -f ] [ -n ]" && return 1
+  if [ "$(pwd)/" != "$(basedir $1)" ]; then # TODO change to "not changing dir"
+    local dir="$(basedir $1)"
+    echo "changing direcory to $dir"
+    cd "$dir" || _error "could not cd into $dir" || return 1
+    split
+  fi
+  echo -n "- waiting for device -"
+  adb wait-for-device && echo -n "${LINE_CLEAR}"
+  if ! isAppInstalled "$2"; then
+    _progessInfo "INSTALLING" && adb install "$1" || return 1
+  elif _argsContaining "-f" $@; then
+    _progessInfo "UNINSTALLING" && adb uninstall "$2" || return 1
+    _progessInfo "INSTALLING" && adb install "$1" || return 1
+  else
+    _progessInfo "REINSTALLING" && adb install -r "$1" || return 1
+  fi
+  if ! _argsContaining "-n" $@; then
+    split
+    startApp "$2"
+  fi
+}
+
+startApp() {
+  if _argsContaining "-h" $@ || _argsContaining "--help" $@ || [ ! "$1" ]; then
+    echo "You need to specyify an app (example: com.molikuner.nigb)"
+    return 1
+  fi
+  _progessInfo "STARTING"
+  adb shell monkey -p $1 1 >/dev/null 2>&1 \
+    && echo "${COLOR_GREEN}OKAY${COLOR_RESET}" \
+    || _error "${COLOR_RED}FAILED${COLOR_RESET} ($1)" || return 1
+  _progessInfo "FIXING ANDROID"
+  adb shell content insert --uri content://settings/system --bind name:s:accelerometer_rotation --bind value:i:0 \
+    && echo "${COLOR_GREEN}OKAY${COLOR_RESET}" \
+    || _error "${COLOR_RED}FAILED${COLOR_RESET}" || return 1
+}
+
+if ! _has_session main ; then
+  _create_session main
+fi

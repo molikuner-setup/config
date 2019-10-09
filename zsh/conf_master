@@ -1,8 +1,11 @@
 #conf_master
 source $(dirname $0)/conf_all
 source $(dirname $0)/.credentials
-if [ -e $(dirname $0)/conf_$(hostname) ]; then
-  source $(dirname $0)/conf_$(hostname);
+
+HOSTNAME=$(scutil --get LocalHostName || hostname)
+
+if [ -e $(dirname $0)/conf_$HOSTNAME ]; then
+  source $(dirname $0)/conf_$HOSTNAME;
 else
   echo "Setup-file not found!"
 fi
