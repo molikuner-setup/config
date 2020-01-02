@@ -2,7 +2,7 @@
 source $(dirname $0)/conf_all
 source $(dirname $0)/.credentials
 
-HOSTNAME=$(scutil --get LocalHostName || hostname)
+HOSTNAME=$(scutil --get LocalHostName 2>/dev/null || hostname)
 
 if [ -e $(dirname $0)/conf_$HOSTNAME ]; then
   source $(dirname $0)/conf_$HOSTNAME;
