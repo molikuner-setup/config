@@ -1,5 +1,7 @@
 " testing vim config
 
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+
 map <C-h> :call WinMove('h')<cr>
 map <C-j> :call WinMove('j')<cr>
 map <C-k> :call WinMove('k')<cr>
@@ -24,4 +26,6 @@ nnoremap <silent> j gj
 nnoremap <silent> k gk
 
 set clipboard=unnamed
+
+let g:ctrlp_show_hidden = 1
 

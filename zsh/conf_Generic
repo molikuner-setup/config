@@ -156,3 +156,4 @@ startApp() {
 if ! _has_session main ; then
   _create_session main
 fi
+

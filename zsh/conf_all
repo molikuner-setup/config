@@ -1,9 +1,4 @@
 #conf_all
-if [ "$(diff $(dirname $0)/.zshrc ~/.zshrc 2>/dev/null)" != "" ]; then
-  cp $(dirname $0)/.zshrc ~/.zshrc
-  echo "Please restart your terminal sessions! new update in .zshrc config"
-  kill -INT $$
-fi
 
 COLOR_RED="\\033[0;31m"
 COLOR_GREEN="\\033[0;32m"
@@ -80,15 +75,9 @@ function _create_session() {
 function tmx() {
   if _argsContaining "-h" $@ || _argsContaining "--help" $@; then
     echo -e "USAGE: $0 //TODO
-    # tmx d -> detach
     # tmx (inside tmux) -> detach
-    # tmx [- ARGUMENTS] (outside) -> tmux ARGUMENTS
     # tmx main -> create session main or attach"
-  elif [ "$@" = "d" ] || ([ "$1" = "-" ] && [ "$@" != "-" ]) || ([ ! "$@" ] && [ "$TMUX" ]); then
-    [ "$TMUX" ] && tmux detach-client
-    shift
-    [ "$@" ] tmux $@
-  else
+  elif [ "$@" ]; then
     if _has_session $1; then
       if [ ! "$TMUX" ]; then
         echo "[attached (to session $1)]"
@@ -100,12 +89,11 @@ function tmx() {
       _create_session $@
       $0 $@
     fi
+  else
+    tmux detach-client
   fi
 }
 
-function tmain() {
-  tmx "main" $1
-}
 
 function dupes() {
   if _argsContaining "-h" $@ || _argsContaining "--help" $@; then
@@ -134,3 +122,7 @@ function dupes() {
 function infinity() {
   while true; do sleep 1 && "$@"; done
 }
+
+alias tmain="tad main"
+alias r="source ~/.zshrc"
+ 
