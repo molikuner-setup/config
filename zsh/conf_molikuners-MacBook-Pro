@@ -2,6 +2,13 @@
 
 export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"  # for n (see http://git.io/n-install-repo).
 
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
+
+export AWS_SHARED_CREDENTIALS_FILE=$HOME/.aws/credentials
+export AWS_DEFAULT_PROFILE=default
+export AWS_DEFAULT_REGION=eu-west-1
+
 export GPG_TTY=$(tty)
 
 inDir() {
