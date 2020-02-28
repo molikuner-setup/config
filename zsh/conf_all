@@ -123,6 +123,11 @@ function infinity() {
   while true; do sleep 1 && "$@"; done
 }
 
+function clr() {
+  clear
+  [ "$TMUX" ] && tmux clear-history
+}
+
 alias tmain="tad main"
 alias r="source ~/.zshrc"
  

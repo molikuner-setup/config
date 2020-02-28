@@ -29,3 +29,5 @@ set clipboard=unnamed
 
 let g:ctrlp_show_hidden = 1
 
+syntax on
+
