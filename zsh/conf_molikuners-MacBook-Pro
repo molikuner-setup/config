@@ -97,3 +97,6 @@ tdev() {
 if ! _has_session main ; then
   _create_session main
 fi
+
+alias cat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo default || echo GitHub)"
+alias git="/usr/local/bin/git"

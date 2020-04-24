@@ -130,4 +130,5 @@ function clr() {
 
 alias tmain="tad main"
 alias r="source ~/.zshrc"
- 
+alias cclr="cd; clr"
+
