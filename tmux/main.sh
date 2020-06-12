@@ -9,8 +9,6 @@ tmux split-window -h -t "$session"
 tmux split-window -v -t "$session" 'htop'
 
 # start everything
-tmux send-keys -t "${session}.0" C-z ' clear' Enter
-tmux send-keys -t "${session}.1" C-z ' clear' Enter
 tmux select-window -t "${window}"
 tmux rename-window "${session}"
 tmux select-pane -t "${window}.1"
