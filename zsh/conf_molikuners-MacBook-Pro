@@ -100,3 +100,4 @@ fi
 
 alias cat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo default || echo GitHub)"
 alias git="/usr/local/bin/git"
+alias fixLint="git diff --name-only --cached --relative | grep '\\.kt[s\"]\\?$' | xargs ktlint --relative -F ."

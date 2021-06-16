@@ -131,4 +131,7 @@ function clr() {
 alias tmain="tad main"
 alias r="source ~/.zshrc"
 alias cclr="cd; clr"
+alias ffmpeg="ffmpeg -hide_banner"
+alias ffprobe="ffprobe -hide_banner"
+alias ffplay="ffplay -hide_banner"
 
