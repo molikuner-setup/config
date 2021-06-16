@@ -125,7 +125,7 @@ function infinity() {
 
 function clr() {
   clear
-  [ "$TMUX" ] && tmux clear-history
+  [ "$TMUX" ] && tmux clear-history || true
 }
 
 alias tmain="tad main"
