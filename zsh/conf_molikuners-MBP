@@ -1,58 +1,30 @@
 #conf_molikuners-MacBook-Pro # Work
 
-export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"  # for n (see http://git.io/n-install-repo).
-
-export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
+eval "$(rbenv init - zsh)"
 
-export AWS_SHARED_CREDENTIALS_FILE=$HOME/.aws/credentials
-export AWS_DEFAULT_PROFILE=default
-export AWS_DEFAULT_REGION=eu-west-1
-
+adc() {
+  adb connect "$@" && adb wait-for-device
+}
 export GPG_TTY=$(tty)
+export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools/:$HOME/Library/Android/sdk/emulator/:/Users/molikuner/.local/bin:/Users/molikuner/Library/Python/3.9/bin:/Users/molikuner/.cargo/bin"
 
-inDir() {
-  local pwdPath
-  pwdPath=$(pwd)
-  [ "${pwdPath:0:${#1}}" = $1 ]
-}
-
-dockerExsists() {
-  [ "docker ps -aq -f name=$1" ]
-}
-
-dockerCreateBuildServer() {
-  if dockerExsists build-server; then
-    echo "Can't create an exsisting server again!" >&2
+dlStream() {
+  if [ "X$2" = "X" ]; then
+    echo "$0 <url> <stream-name>"
     return 1
   fi
-  docker create -it --name build-server --hostname build-server -v ~/.gradle/caches:/root/.gradle/caches -v ~/IdeaProjects:/root/IdeaProjects -v ~/workspace:/root/workspace --entrypoint 'echo "Please detatch and exec your stuff" && while true; do sleep 9999999; done' javiersantos/android-ci
+  ffmpeg -i "`streamlink --stream-url \"$1\" best`" -c:a copy -c:v copy "${2}.mkv"
 }
 
-dockerRunning() {
-  eval "$(docker inspect -f '{{.State.Running}}' $1 2>/dev/null || echo 'false')"
-}
-
-buildServer() {
-  if ! inDir ~/workspace && ! inDir ~/IdeaProjects; then
-    echo "You need to be in one of the mounted dirs to be able to build" >&2
+openStream() {
+  if [ "X$2" = "X" ]; then
+    echo "$0 <url> <stream-name>"
     return 1
   fi
-  local pathPart
-  pathPart="$(pwd | cut -d '/' -f '4-')"
-  if dockerRunning build-server; then
-    if ! [ ! "$*" ]; then
-      docker exec -it -w /root/$pathPart build-server "$@"
-    else
-      docker exec -it -w /root/$pathPart build-server bash
-    fi
-  elif dockerExsists build-server; then
-    docker start build-server
-    buildServer $@ # execute itself and start bash session
-  else
-    dockerCreateBuildServer
-    buildServer $@
-  fi
+  dlStream "$1" "$2" &
+  iina "${2}.mkv"
+  fg
 }
 
 gitMolikuner() {
@@ -101,3 +73,4 @@ fi
 alias cat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo default || echo GitHub)"
 alias git="/usr/local/bin/git"
 alias fixLint="git diff --name-only --cached --relative | grep '\\.kt[s\"]\\?$' | xargs ktlint --relative -F ."
+alias docker='docker stats --no-stream &>/dev/null || eval $(docker-machine env default) && docker'
