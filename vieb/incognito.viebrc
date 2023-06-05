@@ -1,0 +1,19 @@
+source common.viebrc
+
+" Options
+set clearcookiesonquit
+set cleardownloadsonquit
+set clearhistoryinterval=session
+set clearlocalstorageonquit
+set commandhist=useronly
+set containercolors=
+set containernewtab=temp%n
+set containershowname=never
+set containersplitpage=temp%n
+set containerstartuppage=temp%n
+set explorehist=session
+set restoretabs=none
+set storenewvisits=
+set quitonlasttabclose
+
+" vim: ft=vim
