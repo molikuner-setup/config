@@ -1,3 +1,10 @@
 source common.viebrc
 
+" Options
+set externalcommand=~/workspace/config/vieb/incognito-opener
+
+
+" Commands
+colorscheme light
+
 " vim: ft=vim

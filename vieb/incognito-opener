@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ "X`uname`" = "XDarwin" ]; then
+  /Applications/Vieb.app/Contents/MacOS/Vieb --new --wait-apps --args --datafolder=~/Library/Application\ Support/Vieb/profiles/incognito "$@"
+  exit $?
+else
+  echo "`uname` is currently not supported for $0" >&2
+  exit 1
+fi

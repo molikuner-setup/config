@@ -13,7 +13,12 @@ set containersplitpage=temp%n
 set containerstartuppage=temp%n
 set explorehist=session
 set restoretabs=none
+set replacestartup=newtab
 set storenewvisits=
 set quitonlasttabclose
+set windowtitle="Incognito %app - %title"
+
+" Commands
+colorscheme compact
 
 " vim: ft=vim

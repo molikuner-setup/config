@@ -6,7 +6,6 @@ set permissioncertificateerror=ask
 set searchengine=https://start.duckduckgo.com/?kae=d&kav=1&ko=-1&k1=-1&q=%s&ia=web
 set splitbelow
 set splitright
-set tabclosefocus=right
 set tabreopenposition=previous
 
 " Mappings

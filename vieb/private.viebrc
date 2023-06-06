@@ -11,6 +11,7 @@ set containernewtab=temp0
 set containershowname=never
 set containersplitpage=temp0
 set containerstartuppage=temp0
+set externalcommand=~/workspace/config/vieb/incognito-opener
 set explorehist=session
 set restoretabs=pinned
 
