@@ -27,7 +27,7 @@ highlight LineError ctermbg=red guibg=red ctermfg=gray guifg=gray
 autocmd BufEnter,WinEnter * match TabError /\t/            " you really shouldn't use tabs!
 autocmd BufEnter,WinEnter * match SpaceError /\s\+$/       " trailing spaces aren't needed
 autocmd BufEnter,WinEnter * match LineWarning /\%>80v.\+/  " lines longer than 80 chars are hardly readable
-autocmd BufEnter,WinEnter * match LineError /\%>120v.\+/   " lines longer than 120 chars are unreadable
+" autocmd BufEnter,WinEnter * match LineError /\%>120v.\+/   " lines longer than 120 chars are unreadable
 
 filetype plugin on
 
