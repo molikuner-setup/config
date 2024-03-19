@@ -14,5 +14,7 @@ set containerstartuppage=temp0
 set externalcommand=~/workspace/config/vieb/incognito-opener
 set explorehist=session
 set restoretabs=pinned
+set favoritepages+=https://betterprogramming.pub/writing-ios-apps-without-xcode-89450d0de21a
+set favoritepages+=https://steinbaugh.com/posts/posix.html
 
 " vim: ft=vim

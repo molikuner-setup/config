@@ -1,9 +1,10 @@
 " Options
 set devtoolsposition=split
 set downloadmethod=ask
-set favoritepages=https://start.duckduckgo.com/?kae=d&kav=1&ko=-1&k1=-1&ia=web
+set favoritepages=https://start.duckduckgo.com/?kae=d&kav=1&k1=-1&ia=web
+set markposition=open
 set permissioncertificateerror=ask
-set searchengine=https://start.duckduckgo.com/?kae=d&kav=1&ko=-1&k1=-1&q=%s&ia=web
+set searchengine=https://start.duckduckgo.com/?kae=d&kav=1&k1=-1&q=%s&ia=web
 set splitbelow
 set splitright
 set tabreopenposition=previous
@@ -11,5 +12,9 @@ set tabreopenposition=previous
 " Mappings
 map <M-q> <:quitall>
 map <M-w> <:close>
+
+" Unmappings
+unmap <A-Left>
+unmap <A-Right>
 
 " vim: ft=vim
