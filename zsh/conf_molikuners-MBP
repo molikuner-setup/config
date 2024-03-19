@@ -1,13 +1,22 @@
 #conf_molikuners-MacBook-Pro # Work
 
-eval "$(jenv init -)"
-eval "$(rbenv init - zsh)"
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
+if type jenv &>/dev/null; then
+  eval "$(jenv init -)"
+fi
+if type rbenv &>/dev/null; then
+  eval "$(rbenv init - zsh)"
+fi
 
 adc() {
   adb connect "$@" && adb wait-for-device
 }
 export GPG_TTY=$(tty)
-export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools/:$HOME/Library/Android/sdk/emulator/:/Users/molikuner/.local/bin:/Users/molikuner/Library/Python/3.9/bin:/Users/molikuner/.cargo/bin"
+[ -s "$HOME/.cargo/env" ] && source "$HOME/.cargo/env" # setup rustup https://rustup.rs/
+export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools/:$HOME/Library/Android/sdk/emulator/:/Users/molikuner/.local/bin:$HOME/.rd/bin"
 
 dlStream() {
   if [ "X$2" = "X" ]; then
@@ -66,11 +75,20 @@ tdev() {
   tmx "dev" $@
 }
 
-if ! _has_session main ; then
-  _create_session main
-fi
+#if ! _has_session main ; then
+#  _create_session main
+#fi
 
 alias cat="bat --theme=\$(defaults read -globalDomain AppleInterfaceStyle &> /dev/null && echo default || echo GitHub)"
-alias git="/usr/local/bin/git"
 alias fixLint="git diff --name-only --cached --relative | grep '\\.kt[s\"]\\?$' | xargs ktlint --relative -F ."
-alias docker='docker stats --no-stream &>/dev/null || eval $(docker-machine env default) && docker'
+#alias docker='docker stats --no-stream &>/dev/null || eval $(docker-machine env default) && docker'
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+if command -v ngrok &>/dev/null; then
+  eval "$(ngrok completion)"
+fi
+
+alias simctl="xcrun simctl"
